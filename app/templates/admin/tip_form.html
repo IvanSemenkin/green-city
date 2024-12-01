@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{% if tip %}Редактирование{% else %}Добавление{% endif %} эко-совета</h1>
+
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Название</label>
+                <input type="text" name="title" class="form-control" value="{{ tip.title if tip else '' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Категория</label>
+                <select name="category" class="form-select" required>
+                    <option value="">Выберите категорию</option>
+                    {% for key, value in categories.items() %}
+                    <option value="{{ key }}" {% if tip and tip.category == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Сложность</label>
+                <select name="difficulty" class="form-select" required>
+                    <option value="">Выберите сложность</option>
+                    {% for key, value in difficulty_levels.items() %}
+                    <option value="{{ key }}" {% if tip and tip.difficulty == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Очки</label>
+                <input type="number" name="points" class="form-control" value="{{ tip.points if tip else 0 }}" min="0">
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Описание</label>
+            <textarea name="description" class="form-control" rows="4" required>{{ tip.description if tip else '' }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-success">{% if tip %}Обновить{% else %}Добавить{% endif %} совет</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Панель администратора</h1>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Пользователи</h5>
+                    <p class="card-text display-4">{{ users_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Мероприятия</h5>
+                    <p class="card-text display-4">{{ events_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Эко-челленджи</h5>
+                    <p class="card-text display-4">{{ challenges_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Управление мероприятиями</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('admin.events') }}" class="btn btn-primary">Просмотреть все мероприятия</a>
+                    <a href="{{ url_for('admin.add_event') }}" class="btn btn-success">Добавить мероприятие</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Управление эко-челленджами</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('admin.challenges') }}" class="btn btn-primary">Просмотреть все челленджи</a>
+                    <a href="{{ url_for('admin.add_challenge') }}" class="btn btn-success">Добавить челлендж</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

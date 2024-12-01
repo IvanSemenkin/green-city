@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Эко-челленджи</h1>
+
+    <!-- Активные челленджи -->
+    <h2 class="mb-3">Активные челленджи</h2>
+    <div class="row">
+        {% for challenge in active_challenges %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ challenge.title }}</h5>
+                    <p class="card-text">{{ challenge.description }}</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-calendar-alt"></i> Начало: {{ challenge.start_date.strftime('%d.%m.%Y') }}</li>
+                        <li><i class="fas fa-calendar-check"></i> Конец: {{ challenge.end_date.strftime('%d.%m.%Y') }}</li>
+                        <li><i class="fas fa-star"></i> Очки: {{ challenge.points }}</li>
+                    </ul>
+                    {% if current_user.is_authenticated %}
+                    <div class="d-grid">
+                        {% if challenge in current_user.challenges %}
+                        <button class="btn btn-success" disabled>Вы участвуете</button>
+                        {% else %}
+                        <form action="{{ url_for('main.join_challenge', id=challenge.id) }}" method="POST">
+                            <button type="submit" class="btn btn-primary w-100">Принять вызов</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="d-grid">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Войдите, чтобы участвовать</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if not active_challenges %}
+    <p>Сейчас нет активных челленджей</p>
+    {% endif %}
+
+    <!-- Предстоящие челленджи -->
+    <h2 class="mb-3 mt-4">Предстоящие челленджи</h2>
+    <div class="row">
+        {% for challenge in upcoming_challenges %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">{{ challenge.title }}</h5>
+                    <p class="card-text">{{ challenge.description }}</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-calendar-alt"></i> Начало: {{ challenge.start_date.strftime('%d.%m.%Y') }}</li>
+                        <li><i class="fas fa-calendar-check"></i> Конец: {{ challenge.end_date.strftime('%d.%m.%Y') }}</li>
+                        <li><i class="fas fa-star"></i> Очки: {{ challenge.points }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if not upcoming_challenges %}
+    <p>Нет предстоящих челленджей</p>
+    {% endif %}
+
+    <!-- Завершенные челленджи -->
+    <h2 class="mb-3 mt-4">Завершенные челленджи</h2>
+    <div class="row">
+        {% for challenge in completed_challenges %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">{{ challenge.title }}</h5>
+                    <p class="card-text text-muted">{{ challenge.description }}</p>
+                    <ul class="list-unstyled text-muted">
+                        <li><i class="fas fa-calendar-alt"></i> Начало: {{ challenge.start_date.strftime('%d.%m.%Y') }}</li>
+                        <li><i class="fas fa-calendar-check"></i> Конец: {{ challenge.end_date.strftime('%d.%m.%Y') }}</li>
+                        <li><i class="fas fa-star"></i> Очки: {{ challenge.points }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if not completed_challenges %}
+    <p>Нет завершенных челленджей</p>
+    {% endif %}
+</div>
+{% endblock %}

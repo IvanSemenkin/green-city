@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Эко-мероприятия</h1>
+
+    <!-- Фильтр по типам мероприятий -->
+    <div class="mb-4">
+        <h5>Фильтр по типу:</h5>
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('main.events', type='all') }}" 
+               class="btn {{ 'btn-primary' if selected_type == 'all' else 'btn-outline-primary' }}">
+                Все
+            </a>
+            {% for type_code, type_name in event_types.items() %}
+            <a href="{{ url_for('main.events', type=type_code) }}" 
+               class="btn {{ 'btn-primary' if selected_type == type_code else 'btn-outline-primary' }}">
+                {{ type_name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Будущие мероприятия -->
+    <h2 class="mb-3">Предстоящие эко-мероприятия</h2>
+    {% if future_events %}
+    <div class="row">
+        {% for event in future_events %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <span class="badge 
+                        {% if event.event_type == 'subbotnik' %}bg-success
+                        {% elif event.event_type == 'tree_planting' %}bg-success
+                        {% elif event.event_type == 'eco_lecture' %}bg-info
+                        {% elif event.event_type == 'cleanup' %}bg-warning
+                        {% elif event.event_type == 'recycling' %}bg-primary
+                        {% elif event.event_type == 'eco_festival' %}bg-danger
+                        {% elif event.event_type == 'workshop' %}bg-secondary
+                        {% else %}bg-secondary{% endif %} mb-2">
+                        {{ event_types[event.event_type] }}
+                    </span>
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">{{ event.description }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> {{ event.date.strftime('%d.%m.%Y %H:%M') }}<br>
+                            <i class="fas fa-map-marker-alt"></i> {{ event.location }}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Нет предстоящих эко-мероприятий</p>
+    {% endif %}
+
+    <!-- Прошедшие мероприятия -->
+    <h2 class="mb-3 mt-4">Прошедшие эко-мероприятия</h2>
+    {% if past_events %}
+    <div class="row">
+        {% for event in past_events %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 bg-light">
+                <div class="card-body">
+                    <span class="badge 
+                        {% if event.event_type == 'subbotnik' %}bg-success
+                        {% elif event.event_type == 'tree_planting' %}bg-success
+                        {% elif event.event_type == 'eco_lecture' %}bg-info
+                        {% elif event.event_type == 'cleanup' %}bg-warning
+                        {% elif event.event_type == 'recycling' %}bg-primary
+                        {% elif event.event_type == 'eco_festival' %}bg-danger
+                        {% elif event.event_type == 'workshop' %}bg-secondary
+                        {% else %}bg-secondary{% endif %} mb-2">
+                        {{ event_types[event.event_type] }}
+                    </span>
+                    <h5 class="card-title text-muted">{{ event.title }}</h5>
+                    <p class="card-text text-muted">{{ event.description }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> {{ event.date.strftime('%d.%m.%Y %H:%M') }}<br>
+                            <i class="fas fa-map-marker-alt"></i> {{ event.location }}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Нет прошедших эко-мероприятий</p>
+    {% endif %}
+</div>
+{% endblock %}

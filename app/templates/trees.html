@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Посаженные деревья</h1>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Общая статистика</h5>
+                    <p class="card-text">Всего посажено деревьев: {{ total_trees }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Деревья по видам</h5>
+                    <div class="row">
+                        {% for species, count in trees_by_species %}
+                        <div class="col-md-4">
+                            <span>{{ tree_species[species] }}: {{ count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Форма добавления дерева -->
+    {% if current_user.is_authenticated %}
+    <div class="card mb-4">
+        <div class="card-header">
+            Добавить новое дерево
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Вид дерева</label>
+                        <select name="species" class="form-select" required>
+                            <option value="">Выберите вид</option>
+                            {% for key, value in tree_species.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Широта</label>
+                        <input type="number" step="0.000001" name="latitude" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Долгота</label>
+                        <input type="number" step="0.000001" name="longitude" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Статус</label>
+                        <select name="status" class="form-select">
+                            {% for key, value in tree_statuses.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Описание (необязательно)</label>
+                        <textarea name="description" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Добавить дерево</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Фильтрация -->
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <select name="species" class="form-select" onchange="this.form.submit()">
+                    <option value="all" {% if selected_species == 'all' %}selected{% endif %}>Все виды</option>
+                    {% for key, value in tree_species.items() %}
+                    <option value="{{ key }}" {% if selected_species == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <select name="status" class="form-select" onchange="this.form.submit()">
+                    <option value="all" {% if selected_status == 'all' %}selected{% endif %}>Любой статус</option>
+                    {% for key, value in tree_statuses.items() %}
+                    <option value="{{ key }}" {% if selected_status == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <!-- Список деревьев -->
+    <div class="row">
+        {% if trees %}
+            {% for tree in trees %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ tree_species[tree.species] }}</h5>
+                        <p class="card-text">
+                            <strong>Дата посадки:</strong> {{ tree.planting_date.strftime('%d.%m.%Y') }}<br>
+                            <strong>Статус:</strong> {{ tree_statuses[tree.status] }}<br>
+                            {% if tree.description %}
+                            <strong>Описание:</strong> {{ tree.description }}
+                            {% endif %}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-success">{{ tree_species[tree.species] }}</span>
+                            <span class="badge bg-info">{{ tree_statuses[tree.status] }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Нет деревьев, соответствующих выбранным фильтрам.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

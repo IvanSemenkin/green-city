@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Советы по экологичному образу жизни</h1>
+
+    <!-- Форма фильтрации -->
+    <form method="get" action="{{ url_for('main.tips') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <select name="category" class="form-select" onchange="this.form.submit()">
+                    <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Все категории</option>
+                    {% for key, value in categories.items() %}
+                    <option value="{{ key }}" {% if selected_category == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <select name="difficulty" class="form-select" onchange="this.form.submit()">
+                    <option value="all" {% if selected_difficulty == 'all' %}selected{% endif %}>Любая сложность</option>
+                    {% for key, value in difficulty_levels.items() %}
+                    <option value="{{ key }}" {% if selected_difficulty == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <!-- Список советов -->
+    <div class="row">
+        {% if tips %}
+            {% for tip in tips %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ tip.title }}</h5>
+                        <p class="card-text">{{ tip.description }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-info">{{ categories[tip.category] }}</span>
+                            <span class="badge bg-secondary">{{ difficulty_levels[tip.difficulty] }}</span>
+                        </div>
+                        {% if tip.points > 0 %}
+                        <div class="mt-2">
+                            <small class="text-muted">Очки: {{ tip.points }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Нет советов, соответствующих выбранным фильтрам.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

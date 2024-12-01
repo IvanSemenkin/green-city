@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div id="map" style="height: 600px; width: 100%;"></div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <h3>Зелёные зоны Пензенской области</h3>
+            <div id="green-zones-list" class="list-group">
+                <!-- Список зон будет заполнен динамически -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Координаты центра Пензенской области
+        var map = L.map('map').setView([53.2, 45.0], 8);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var greenZones = {{ green_zones | tojson | safe }};
+        var greenZonesList = document.getElementById('green-zones-list');
+
+        // Цвета для разных типов зеленых зон
+        var zoneColors = {
+            'Городской парк': '#2ecc71',     // Насыщенный зеленый
+            'Сквер': '#27ae60',               // Темно-зеленый
+            'Лесопарк': '#16a085',            // Сине-зеленый
+            'Детский парк': '#1abc9c',        // Бирюзовый
+            'Природная зона': '#3498db',      // Голубой
+            'Бульвар': '#2980b9',             // Синий
+            'default': '#2ecc71'              // Зеленый по умолчанию
+        };
+
+        greenZones.forEach(function(zone) {
+            // Выбираем цвет для маркера
+            var markerColor = zoneColors[zone.type] || zoneColors['default'];
+            
+            // Создаем цветной круговой маркер
+            var marker = L.circleMarker([zone.latitude, zone.longitude], {
+                radius: 10,
+                fillColor: markerColor,
+                color: markerColor,
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.7
+            }).addTo(map);
+            
+            // Создаем всплывающее окно с информацией о зоне
+            marker.bindPopup(`
+                <b>${zone.name}</b><br>
+                Тип: ${zone.type}<br>
+                Район: ${zone.district}<br>
+                Площадь: ${zone.area ? zone.area + ' га' : 'Не указано'}<br>
+                ${zone.description ? 'Описание: ' + zone.description : ''}
+            `);
+
+            // Создаем элемент списка
+            var listItem = document.createElement('a');
+            listItem.href = '#';
+            listItem.className = 'list-group-item list-group-item-action';
+            listItem.innerHTML = `
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">${zone.name}</h5>
+                    <small>${zone.district}</small>
+                </div>
+                <p class="mb-1">${zone.type}</p>
+            `;
+            
+            // При клике на элемент списка центрируем карту
+            listItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                map.setView([zone.latitude, zone.longitude], 12);
+                marker.openPopup();
+            });
+
+            greenZonesList.appendChild(listItem);
+        });
+    });
+</script>
+{% endblock %}

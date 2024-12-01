@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "green-city-eco-portal"
+version = "0.1.0"
+dependencies = [
+    "flask==2.3.3",
+    "flask-sqlalchemy==3.0.5",
+    "flask-login==0.6.2",
+    "flask-migrate==4.0.4",
+    "python-dotenv==1.0.0"
+]
+
+[project.scripts]
+flask = "flask.cli:main"

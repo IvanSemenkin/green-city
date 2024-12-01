@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">{{ 'Редактировать' if challenge else 'Добавить' }} эко-челлендж</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Название</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="{{ challenge.title if challenge else '' }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Описание</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="4" required>{{ challenge.description if challenge else '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Дата начала</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" 
+                                   value="{{ challenge.start_date.strftime('%Y-%m-%d') if challenge else '' }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">Дата окончания</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" 
+                                   value="{{ challenge.end_date.strftime('%Y-%m-%d') if challenge else '' }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="points" class="form-label">Очки за выполнение</label>
+                            <input type="number" class="form-control" id="points" name="points" 
+                                   value="{{ challenge.points if challenge else '' }}" required min="0">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                {{ 'Сохранить изменения' if challenge else 'Добавить челлендж' }}
+                            </button>
+                            <a href="{{ url_for('admin.challenges') }}" class="btn btn-outline-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
